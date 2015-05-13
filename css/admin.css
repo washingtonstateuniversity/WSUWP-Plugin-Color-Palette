@@ -1,0 +1,29 @@
+.admin-palette-option {
+	position: relative;
+	display: inline-block;
+	margin: 20px 5px 5px 5px;
+	width: 125px;
+	height: 125px;
+	border: 1px solid #bbb;
+}
+
+.admin-palette-option:hover {
+	cursor: pointer;
+	border: 1px solid #eee;
+}
+
+.admin-palette-current,
+.admin-palette-current:hover {
+	border: 1px solid #bbb;
+}
+
+.admin-palette-current:after {
+	position: absolute;
+	bottom: -15px;
+	left: 0;
+	display: block;
+	width: 125px;
+	height: 5px;
+	background-color: #7a7a7a;
+	content: '';
+}
