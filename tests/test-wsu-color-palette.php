@@ -49,6 +49,9 @@ class WSU_Color_Palette_Test extends WP_UnitTestCase {
 		$this->assertNotContains( 'wsu-palette-text-invalid', get_body_class() );
 	}
 
+	/**
+	 * A filter can be used to adjust the list of valid color palettes for the body class.
+	 */
 	public function test_page_valid_filtered_color_palette() {
 		add_filter( 'wsu_color_palette_values', array( $this, 'filter_wsu_color_palette' ) );
 
@@ -66,6 +69,9 @@ class WSU_Color_Palette_Test extends WP_UnitTestCase {
 		remove_filter( 'wsu_color_palette_values', array( $this, 'filter_wsu_color_palette' ) );
 	}
 
+	/**
+	 * When the list of color palettes is filtered, an invalid selection should still result in default.
+	 */
 	public function test_page_invalid_filtered_color_palette() {
 		add_filter( 'wsu_color_palette_values', array( $this, 'filter_wsu_color_palette' ) );
 		$post_id = $this->factory->post->create( array( 'post_type' => 'page', 'post_title' => 'A Filtered Page' ) );

@@ -37,6 +37,11 @@ class WSU_Color_Palette {
 		add_filter( 'body_class', array( $this, 'add_body_class' ), 11 );
 	}
 
+	/**
+	 * Return a filtered list of color palettes.
+	 *
+	 * @return array
+	 */
 	private static function get_color_palettes() {
 		$palettes = apply_filters( 'wsu_color_palette_values', self::$color_palettes );
 
