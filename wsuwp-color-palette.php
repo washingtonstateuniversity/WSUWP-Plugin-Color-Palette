@@ -13,7 +13,7 @@ class WSU_Color_Palette {
 	/**
 	 * @var array List of color palettes available for pages.
 	 */
-	public $color_palettes = array(
+	static $color_palettes = array(
 		'default' => array( 'name' => 'Default', 'hex' => '#ffffff' ),
 		'crimson' => array( 'name' => 'Crimson', 'hex' => '#981e32' ),
 		'gray'    => array( 'name' => 'Gray',    'hex' => '#5e6a71' ),
@@ -26,7 +26,7 @@ class WSU_Color_Palette {
 	/**
 	 * @var string The meta key used to track a page's color palette.
 	 */
-	public $color_palette_meta_key = '_wsu_color_palette';
+	static $color_palette_meta_key = '_wsu_color_palette';
 
 	/**
 	 * Setup hooks.
@@ -55,9 +55,9 @@ class WSU_Color_Palette {
 	 * @param WP_Post $post
 	 */
 	public function display_color_palette_meta_box( $post ) {
-		$current_palette = get_post_meta( $post->ID, $this->color_palette_meta_key, true );
+		$current_palette = get_post_meta( $post->ID, $this::$color_palette_meta_key, true );
 
-		if ( ! array_key_exists( $current_palette, $this->color_palettes ) ) {
+		if ( ! array_key_exists( $current_palette, $this::$color_palettes ) ) {
 			$current_palette = 'default';
 		}
 
@@ -65,7 +65,7 @@ class WSU_Color_Palette {
 		<ul class="wsu-palettes">
 			<?php
 
-			foreach( $this->color_palettes as $key => $palette ) {
+			foreach( $this::$color_palettes as $key => $palette ) {
 				if ( $current_palette === $key ) {
 					$class = ' admin-palette-current';
 				} else {
@@ -110,12 +110,30 @@ class WSU_Color_Palette {
 			return;
 		}
 
-		if ( ! isset( $_POST['wsu_palette'] ) || ! array_key_exists( $_POST['wsu_palette'], $this->color_palettes ) ) {
+		if ( ! isset( $_POST['wsu_palette'] ) ) {
 			return;
 		}
 
-		$new_palette = sanitize_key( $_POST['wsu_palette'] );
-		update_post_meta( $post_id, $this->color_palette_meta_key, $new_palette );
+		$this::assign_color_palette( $_POST['wsu_palette'], $post_id );
+	}
+
+	/**
+	 * Assign a given valid palette to a page.
+	 *
+	 * @param string $palette
+	 * @param int    $post_id
+	 *
+	 * @return bool
+	 */
+	static function assign_color_palette( $palette, $post_id ) {
+		if ( ! array_key_exists( $palette, self::$color_palettes ) ) {
+			return false;
+		}
+
+		$new_palette = sanitize_key( $palette );
+		update_post_meta( $post_id, self::$color_palette_meta_key, $new_palette );
+
+		return true;
 	}
 
 	/**
@@ -127,8 +145,8 @@ class WSU_Color_Palette {
 	 */
 	public function add_body_class( $classes ) {
 		if ( is_singular( 'page' ) ) {
-			$palette = get_post_meta( get_the_ID(), $this->color_palette_meta_key, true );
-			if ( ! array_key_exists( $palette, $this->color_palettes ) ) {
+			$palette = get_post_meta( get_the_ID(), $this::$color_palette_meta_key, true );
+			if ( ! array_key_exists( $palette, $this::$color_palettes ) ) {
 				$palette = 'default';
 			}
 
@@ -141,21 +159,5 @@ class WSU_Color_Palette {
 
 		return $classes;
 	}
-
-	public function get_color_palette( $post_id ) {
-		return get_post_meta( $post_id, $this->color_palette_meta_key, true );
-	}
 }
-$wsu_color_palette = new WSU_Color_Palette();
-
-function wsu_get_page_color_palette( $post_id = 0 ) {
-	global $wsu_color_palette;
-
-	$post_id = absint( $post_id );
-
-	if ( 0 === $post_id ) {
-		$post_id = get_the_ID();
-	}
-
-	return $wsu_color_palette->get_color_palette( $post_id );
-}
+new WSU_Color_Palette();
