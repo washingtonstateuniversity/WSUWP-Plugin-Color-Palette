@@ -6,7 +6,7 @@ class WSU_Color_Palette_Test extends WP_UnitTestCase {
 	 */
 	public function test_page_default_color_palette() {
 		$post_id = $this->factory->post->create( array( 'post_type' => 'page', 'post_title' => 'Test Page' ) );
-		$this->go_to( home_url( '?p=' . $post_id ) );
+		$this->go_to( get_the_permalink( $post_id ) );
 		$this->assertContains( 'wsu-palette-default', get_body_class() );
 		$this->assertContains( 'wsu-palette-text-default', get_body_class() );
 	}
@@ -16,8 +16,36 @@ class WSU_Color_Palette_Test extends WP_UnitTestCase {
 	 */
 	public function test_post_default_color_palette() {
 		$post_id = $this->factory->post->create( array( 'post_type' => 'post', 'post_title' => 'Test Post' ) );
-		$this->go_to( home_url( '?p=' . $post_id ) );
+		$this->go_to( get_the_permalink( $post_id ) );
 		$this->assertContains( 'wsu-palette-default', get_body_class() );
 		$this->assertContains( 'wsu-palette-text-default', get_body_class() );
+	}
+
+	/**
+	 * A page assigned a palette should return those classes in the body.
+	 */
+	public function test_page_valid_color_palette() {
+		$post_id = $this->factory->post->create( array( 'post_type' => 'page', 'post_title' => 'A Valid Page' ) );
+		$response = WSU_Color_Palette::assign_color_palette( 'green', $post_id );
+		$this->assertTrue( $response );
+
+		$this->go_to( get_the_permalink( $post_id ) );
+		$this->assertContains( 'wsu-palette-green', get_body_class() );
+		$this->assertContains( 'wsu-palette-text-green', get_body_class() );
+	}
+
+	/**
+	 * A page cannot be assigned an invalid palette and should only return default palette classes in the body.
+	 */
+	public function test_page_invalid_color_palette() {
+		$post_id = $this->factory->post->create( array( 'post_type' => 'page', 'post_title' => 'A Valid Page' ) );
+		$response = WSU_Color_Palette::assign_color_palette( 'invalid', $post_id );
+		$this->assertFalse( $response );
+
+		$this->go_to( get_the_permalink( $post_id ) );
+		$this->assertContains( 'wsu-palette-default', get_body_class() );
+		$this->assertContains( 'wsu-palette-text-default', get_body_class() );
+		$this->assertNotContains( 'wsu-palette-invalid', get_body_class() );
+		$this->assertNotContains( 'wsu-palette-text-invalid', get_body_class() );
 	}
 }
