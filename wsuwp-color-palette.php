@@ -14,7 +14,6 @@ class WSU_Color_Palette {
 	 * @var array List of color palettes available for pages.
 	 */
 	static $color_palettes = array(
-		'default' => array( 'name' => 'Default', 'hex' => '#ffffff' ),
 		'crimson' => array( 'name' => 'Crimson', 'hex' => '#981e32' ),
 		'gray'    => array( 'name' => 'Gray',    'hex' => '#5e6a71' ),
 		'green'   => array( 'name' => 'Green',   'hex' => '#8f7e35' ),
@@ -40,6 +39,10 @@ class WSU_Color_Palette {
 
 	private static function get_color_palettes() {
 		$palettes = apply_filters( 'wsu_color_palette_values', self::$color_palettes );
+
+		$defaults = array( 'default' => array( 'name' => 'Default', 'hex' => '#ffffff' ) );
+
+		$palettes = array_merge( $defaults, $palettes );
 
 		return $palettes;
 	}
@@ -71,7 +74,7 @@ class WSU_Color_Palette {
 		<ul class="wsu-palettes">
 			<?php
 
-			foreach( $this::$color_palettes as $key => $palette ) {
+			foreach( $this::get_color_palettes() as $key => $palette ) {
 				if ( $current_palette === $key ) {
 					$class = ' admin-palette-current';
 				} else {
