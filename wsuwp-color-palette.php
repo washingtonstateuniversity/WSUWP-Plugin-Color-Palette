@@ -14,7 +14,6 @@ class WSU_Color_Palette {
 	 * @var array List of color palettes available for pages.
 	 */
 	static $color_palettes = array(
-		'default' => array( 'name' => 'Default', 'hex' => '#ffffff' ),
 		'crimson' => array( 'name' => 'Crimson', 'hex' => '#981e32' ),
 		'gray'    => array( 'name' => 'Gray',    'hex' => '#5e6a71' ),
 		'green'   => array( 'name' => 'Green',   'hex' => '#8f7e35' ),
@@ -39,6 +38,21 @@ class WSU_Color_Palette {
 	}
 
 	/**
+	 * Return a filtered list of color palettes.
+	 *
+	 * @return array
+	 */
+	private static function get_color_palettes() {
+		$palettes = apply_filters( 'wsu_color_palette_values', self::$color_palettes );
+
+		$defaults = array( 'default' => array( 'name' => 'Default', 'hex' => '#ffffff' ) );
+
+		$palettes = array_merge( $defaults, $palettes );
+
+		return $palettes;
+	}
+
+	/**
 	 * Configure the meta boxes to display for capturing palette.
 	 *
 	 * @param string $post_type The current post's post type.
@@ -57,7 +71,7 @@ class WSU_Color_Palette {
 	public function display_color_palette_meta_box( $post ) {
 		$current_palette = get_post_meta( $post->ID, $this::$color_palette_meta_key, true );
 
-		if ( ! array_key_exists( $current_palette, $this::$color_palettes ) ) {
+		if ( ! array_key_exists( $current_palette, $this::get_color_palettes() ) ) {
 			$current_palette = 'default';
 		}
 
@@ -65,7 +79,7 @@ class WSU_Color_Palette {
 		<ul class="wsu-palettes">
 			<?php
 
-			foreach( $this::$color_palettes as $key => $palette ) {
+			foreach( $this::get_color_palettes() as $key => $palette ) {
 				if ( $current_palette === $key ) {
 					$class = ' admin-palette-current';
 				} else {
@@ -126,7 +140,7 @@ class WSU_Color_Palette {
 	 * @return bool
 	 */
 	static function assign_color_palette( $palette, $post_id ) {
-		if ( ! array_key_exists( $palette, self::$color_palettes ) ) {
+		if ( ! array_key_exists( $palette, self::get_color_palettes() ) ) {
 			return false;
 		}
 
@@ -146,7 +160,7 @@ class WSU_Color_Palette {
 	public function add_body_class( $classes ) {
 		if ( is_singular( 'page' ) ) {
 			$palette = get_post_meta( get_the_ID(), $this::$color_palette_meta_key, true );
-			if ( ! array_key_exists( $palette, $this::$color_palettes ) ) {
+			if ( ! array_key_exists( $palette, $this::get_color_palettes() ) ) {
 				$palette = 'default';
 			}
 
