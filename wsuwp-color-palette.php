@@ -146,16 +146,4 @@ class WSU_Color_Palette {
 		return get_post_meta( $post_id, $this->color_palette_meta_key, true );
 	}
 }
-$wsu_color_palette = new WSU_Color_Palette();
-
-function wsu_get_page_color_palette( $post_id = 0 ) {
-	global $wsu_color_palette;
-
-	$post_id = absint( $post_id );
-
-	if ( 0 === $post_id ) {
-		$post_id = get_the_ID();
-	}
-
-	return $wsu_color_palette->get_color_palette( $post_id );
-}
+new WSU_Color_Palette();
