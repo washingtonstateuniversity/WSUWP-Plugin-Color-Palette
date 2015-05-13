@@ -38,6 +38,12 @@ class WSU_Color_Palette {
 		add_filter( 'body_class', array( $this, 'add_body_class' ), 11 );
 	}
 
+	private static function get_color_palettes() {
+		$palettes = apply_filters( 'wsu_color_palette_values', self::$color_palettes );
+
+		return $palettes;
+	}
+
 	/**
 	 * Configure the meta boxes to display for capturing palette.
 	 *
@@ -57,7 +63,7 @@ class WSU_Color_Palette {
 	public function display_color_palette_meta_box( $post ) {
 		$current_palette = get_post_meta( $post->ID, $this::$color_palette_meta_key, true );
 
-		if ( ! array_key_exists( $current_palette, $this::$color_palettes ) ) {
+		if ( ! array_key_exists( $current_palette, $this::get_color_palettes() ) ) {
 			$current_palette = 'default';
 		}
 
@@ -126,7 +132,7 @@ class WSU_Color_Palette {
 	 * @return bool
 	 */
 	static function assign_color_palette( $palette, $post_id ) {
-		if ( ! array_key_exists( $palette, self::$color_palettes ) ) {
+		if ( ! array_key_exists( $palette, self::get_color_palettes() ) ) {
 			return false;
 		}
 
@@ -146,7 +152,7 @@ class WSU_Color_Palette {
 	public function add_body_class( $classes ) {
 		if ( is_singular( 'page' ) ) {
 			$palette = get_post_meta( get_the_ID(), $this::$color_palette_meta_key, true );
-			if ( ! array_key_exists( $palette, $this::$color_palettes ) ) {
+			if ( ! array_key_exists( $palette, $this::get_color_palettes() ) ) {
 				$palette = 'default';
 			}
 
