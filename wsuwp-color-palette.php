@@ -160,7 +160,7 @@ class WSU_Color_Palette {
 	public function add_body_class( $classes ) {
 		if ( is_singular( 'page' ) ) {
 			$palette = get_post_meta( get_the_ID(), $this::$color_palette_meta_key, true );
-			if ( ! array_key_exists( $palette, $this::get_color_palettes() ) ) {
+			if ( ! $palette || ! array_key_exists( $palette, $this::get_color_palettes() ) ) {
 				$palette = 'default';
 			}
 
