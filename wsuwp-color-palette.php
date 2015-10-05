@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WSU Color Palette
-Version: 0.1.0
+Version: 0.1.1
 Description: Assign a color palette to individual pages for use in styling sections of a site.
 Author: washingtonstateuniversity, jeremyfelt
 Author URI: https://web.wsu.edu/
